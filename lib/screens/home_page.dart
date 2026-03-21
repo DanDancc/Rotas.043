@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../database/db_helper.dart';
 import '../models/local_map.dart';
+import 'form_page.dart';
+import 'map_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -61,11 +63,15 @@ class _HomePageState extends State<HomePage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
-                        icon: const Icon(Icons.edit, color: Colors.blue),
+                       icon: const Icon(Icons.edit, color: Colors.blue),
                         onPressed: () {
-                          // tela de edição
-                        },
-                      ),
+                          Navigator.push(
+                          context,
+                          // Aqui nós passamos o 'ponto' atual para a tela de edição preencher os campos
+                          MaterialPageRoute(builder: (context) => FormPage(pontoParaEditar: ponto)),
+                          ).then((_) => _atualizarLista());
+                          },
+                        ),
                       IconButton(
                         icon: const Icon(Icons.delete, color: Colors.red),
                         onPressed: () => _deletarPonto(ponto.id!),
@@ -73,6 +79,10 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                   onTap: () {
+                    Navigator.push(context, 
+                    MaterialPageRoute(builder:(context) => MapPage(ponto: ponto),
+                    )
+                   );
                     // tela do mapa
                   },
                 );
@@ -80,12 +90,16 @@ class _HomePageState extends State<HomePage> {
             ),
             
       // Botão flutuante para adicionar novos pontos
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () {
-           // tela de criação
-        },
-      ),
+     floatingActionButton: FloatingActionButton(
+  child: const Icon(Icons.add),
+  onPressed: () {
+    // Vai para o Form ao sair att
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const FormPage()),
+    ).then((_) => _atualizarLista()); 
+  },
+),
     );
   }
 }
