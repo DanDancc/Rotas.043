@@ -6,7 +6,7 @@ import '../models/local_map.dart';
 class MapPage extends StatelessWidget {
   final LocalMap ponto; // Recebe o ponto inteiro para ter o nome e as coordenadas
 
-  const MapPage({Key? key, required this.ponto}) : super(key: key);
+  const MapPage({super.key, required this.ponto});
 
   @override
   Widget build(BuildContext context) {

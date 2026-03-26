@@ -8,7 +8,7 @@ class FormPage extends StatefulWidget {
   // Recebe um ponto se for para Editar. Se for para Criar, será nulo (null).
   final LocalMap? pontoParaEditar;
 
-  const FormPage({Key? key, this.pontoParaEditar}) : super(key: key);
+  const FormPage({super.key, this.pontoParaEditar});
 
   @override
   State<FormPage> createState() => _FormPageState();
