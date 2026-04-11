@@ -48,7 +48,7 @@ class DatabaseHelper {
 
   Future<List<LocalMap>> getTodosPontos() async {
     Database db = await instance.database;
-    var res = await db.query(table); //Busca todos os pontos
+    var res = await db.query(table, orderBy: 'id ASC'); //Busca todos os pontos
 
     //Se achar algo, transforma de volta em lista no LocalMap
     List<LocalMap> list = res.isNotEmpty ? res.map((c) => LocalMap.fromMap(c)).toList() : [];
@@ -57,10 +57,11 @@ class DatabaseHelper {
 
   Future<int> update(LocalMap ponto) async {
     Database db = await instance.database;
-    return await db.delete(
-      table,
-      where: 'id = ?',
-      whereArgs: [ponto.id], //Atualiza onde o ID for igual
+    return await db.update(
+      table, 
+      ponto.toMap(),
+      where: 'id = ?', 
+      whereArgs: [ponto.id], // Atualiza apenas onde o ID for igual
     );
   }
 

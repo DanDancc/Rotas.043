@@ -23,12 +23,13 @@ class _HomePageState extends State<HomePage> {
 
   // busca a lista atualizada
   void _atualizarLista() async {
-    final pontos = await DatabaseHelper.instance.getTodosPontos();
-    setState(() {
-      _pontos = pontos; // Atualiza a variável
-    });
+      final pontos = await DatabaseHelper.instance.getTodosPontos();
+      
+      setState(() {
+        _pontos = pontos; 
+      });
+      
   }
-
   // deletar um ponto
   void _deletarPonto(int id) async {
     await DatabaseHelper.instance.delete(id);

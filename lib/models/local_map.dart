@@ -32,8 +32,8 @@ class LocalMap {
       id: map['id'],
       nome: map['nome'],
       endereco: map['endereco'],
-      latitude: map['latitude'],
-      longitude: map['longitude'],
+      latitude: map['latitude'] != null ? (map['latitude'] as num).toDouble() : null,
+      longitude: map['longitude'] != null ? (map['longitude'] as num).toDouble() : null,
     );
   }
 }

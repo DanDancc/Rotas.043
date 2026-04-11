@@ -45,10 +45,11 @@ class _FormPageState extends State<FormPage> {
 
       String nome = _nomeController.text;
       String enderecoTexto = _enderecoController.text;
-      double? lat;
-      double? lon;
+      double? lat = widget.pontoParaEditar?.latitude;
+      double? lon = widget.pontoParaEditar?.longitude;
 
       // 2. Busca Lat e Long no OSM
+      if (widget.pontoParaEditar == null || widget.pontoParaEditar!.endereco != enderecoTexto) {
       try {
         // Link de busca para o endereço digitado
         final url = Uri.parse(
@@ -70,6 +71,7 @@ class _FormPageState extends State<FormPage> {
       } catch (e) {
         print("Erro ao buscar coordenadas: $e");
       }
+    }
 
       // 3. Monta a ficha
       final ponto = LocalMap(
@@ -86,7 +88,7 @@ class _FormPageState extends State<FormPage> {
       } else {
         await DatabaseHelper.instance.insert(ponto);
       }
-
+      
       // 5. Sai do formulário e volta para a tela inicial
       if (mounted) {
         Navigator.pop(context);
