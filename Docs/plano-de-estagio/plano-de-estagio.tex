@@ -1,0 +1,71 @@
+ %%%%%%%%%%%%%%%%%%
+%%%   Template para utilização do plano de estágio %%%
+%%%%%%%%%%%%%%%%%%
+
+%% Preencher apenas os dados entre {}
+
+\documentclass[12pt,openright,oneside,a4paper,english,french,spanish,brazil]{unifil}
+
+\titulo{Sistema de Rotas Inteligentes}
+\autor{Danilo Iglesia Da Silva} % Nome do aluno
+\instituicao{Centro Universitário Filadélfia}
+\local{Londrina}
+\data{2026} % Ano de publicação
+\preambulo{Curso de bacharelado em Ciência da Computação} % Nome do curso
+\orientador{Mário Henrique Akihiko da Costa Adaniya} % Nome do orientador
+\begin{document}
+
+\frenchspacing
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Elementos pré-textuais %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pretextual
+
+
+%Campo de inclusão dos capítulos que complementam o Plano de Estágio
+\imprimircapa
+
+%%Não mexer
+
+\tableofcontents*
+
+  \setlength\absleftindent{0cm}
+  \setlength\absrightindent{0cm}
+
+  %fonte do ambiente%
+  \abstracttextfont{\normalfont\normalsize}
+
+  %indentação e espaçamento entre parágrafos%
+  \setlength{\absparindent}{0pt}
+  \setlength{\absparsep}{18pt}
+
+
+\textual
+
+\renewcommand{\ABNTEXchapterfont}{\fontfamily{cmr}\fontseries{b}\selectfont}
+\renewcommand{\ABNTEXchapterfontsize}{\Large}
+
+\renewcommand{\ABNTEXsectionfont}{\uppercase{\fontfamily{cmr}\fontseries{b}\selectfont}}
+\renewcommand{\ABNTEXsectionfontsize}{\large}
+
+%Inclusão dos capítulos que fazem parte do plano de estágio
+
+\include{./cap-introducao.tex}
+\include{./cap-diagrama-de-caso-de-uso.tex}
+\include{./cap-diagrama-de-sequencia.tex}
+\include{./cap-workflow-AS-IS-na-notação-BPMN.tex}
+\include{./cap-recursos-e-ambiente-de-desenvolvimento.tex}
+
+\cleardoublepage
+
+\postextual
+
+%%Colocar as referências conforme as normas da ABNT, somente as utilizadas no trabalho e presentes neste manuscrito.
+
+%Todas referências deveme star formatadas no formato .bib no arquivo bibliografia.bib para geração automática.
+
+\bibliography{bibliografia}{}
+
+\end{document}

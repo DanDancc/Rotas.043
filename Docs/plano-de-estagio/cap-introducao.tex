@@ -1,0 +1,45 @@
+\chapter{Introdução}\label{sec:1}
+
+O presente plano de estágio tem como objetivo documentar o desenvolvi mento do S.R.I.- Sistema de Rotas Inteligentes, um aplicativo mobile projetado para otimizar a criação de rotas ponto a ponto e circuitos, com foco em motoristas autôno mos, entregadores e pequenas empresas de logística.
+No contexto atual da mobilidade urbana existem diversos desafios, como au mento do trânsito nas grandes cidades, o consumo elevado de combustível e a ne cessidade crescente de entregas rápidas. Atualmente, os motoristas dependem de soluções generalistas como Google Maps ou Waze, que, apesar de úteis, não ofere cemrecursos especializados para o planejamento de rotas complexas, como rotas em circuito que retornem ao ponto incial ou que possam ser salvas para uso recorrente.
+Essa falta de soluções voltadas especificamente para entregadores e peque nas de empresas de logística gera ineficiência operacional, elevando custos e redu zindo a produtividade. Conforme identificado no levantamento realizados através de pesquisas, as principais incluem:
+• Dificuldade na criação de rotas de personalizadas que atendam às necessidades específicas de entregadores. Necessidade de planejar trajetos manualmente, ponto a ponto, em cada entrega.
+• Falta de integração entre planejamento das rotas e a execução prática durante o deslocamento.
+
+O S.R.I. busca resolver estes problemas ao fornecer uma plataforma mobile intuitiva, que permite criar rotas personalizadas, salvar trajetos frequentes e otimizar o tempo de deslocamento, promovendo maior eficiência e economia.
+O sistema utilizará APIs de geolocalização(Google Maps Platform ou TomTom). recursos de GPS em tempo real, este projeto será desenvolvido em Flutter, com banco de dados lcoal em SQLite, oferecendo compatilidade com dispositivos Andriod.
+Este plano de estágio segue a metodologio baseada no RUP (Rational Unified Process), contemplando todas as etapas do projeto: Levantamento de requisitos, planajamento, desenvolvimento e implantação. O documento também visa descrever o ambiente de desenvolvimento, cronograma, recursos utiliados e justificativas para a execução deste projeto.
+
+\section{Proposta e Objetivos}
+
+A proposta do S.R.I. é desenvolver um aplicativo mobile que possibilite ao usuário criar rotas inteligentes personalizadas, incluido rotas em circuito, além de salvar trajetos frequentes para reutilização. O sistema será simples, acessível e focado na realidade de entregadores e motoristas que necessitam otimizar seu tempo e reduizir custos operacionais.
+
+Com isso, o aplicativo irá suprir uma lacuna de mercado, oferecendo funcionalidades que não estão disponíveis em ferramentas tradicionais.
+
+Desenvolver um aplicativo mobile para criação e gerenciamento de rotas inteligentes proporcionando maior eficiência no deslocamento de entregadores e motoristas autônomos.
+
+
+\subsection{Objetivos específicos}
+
+\begin{itemize}
+    \item Implementar um módulo de CRUD completo para pontos de interesse, utilizando a biblioteca sqflite para persistência local e garantindo a visualização imediata dos marcadores no mapa após o cadastro.
+    \item Implementar a funcionalidade de rotas em circuito
+    \item Possibilitar o armazenamento de rotas salvas para reutilização.
+    \item Garantir um tempo de respostas inferior a 30 segundos no cálculo das rotas.
+    \item Proporcionar uma interface amigável, adaptada para uso em movimento.
+    \item Integrar API’s de geolocalização para cálculo otimizado de trajetos.
+\end{itemize}
+
+\section{Justificativa}
+
+Como crescimento do mercado de entregas e logística, há uma demanda por ferramentas que auxiliem no planejamento de rotas. Atualmente, motoristas e entrega dores utilizam soluções generalistas que não atendem às necessidades específicas do setor, o que resulta em tempo perdido, gasto com combustível e baixa produtividade.
+O S.R.I. se justifica como uma solução inovadora por:
+
+\begin{itemize}
+    \item Foco no público-alvo: voltado exclusivamento para entregadores e pequenas empresas de logística.
+    \item Funcionalidade personalizadas: Criação de rotas em circuito e salvamento de trajetos.
+    \item Eficiência operacional: Redução do tempo de planejamento e execução de rotas.
+    \item Acessibilidade: Aplicativo gratuito, desenvolvido com ferramentas oper source, visando reduzir custos de implantação. (REDHAT, 2024)
+\end{itemize}
+
+O projeto será desenvolvido como uma etapa prática do estágio obirgatório, permitindo a aplicação dos conhecimentos adquiridos ao longo do curso e buscando gerar impacto na rotina dos usuários.
