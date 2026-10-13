@@ -1,0 +1,82 @@
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%   Template para utilização do relatório final de estágio        %%%
+%%%   S.R.I. -- Sistema de Rotas Inteligentes                       %%%
+%%%   Modelo: unifil.cls (baseado em abnTeX2)                       %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Preencher apenas os dados entre {}
+
+\documentclass[12pt,openright,oneside,a4paper,english,french,spanish,brazil]{unifil}
+
+\begin{document}
+
+\titulo{Sistema de Rotas Inteligentes} % Título do trabalho
+\autor{Danilo Iglesias da Silva} % Nome do aluno
+\instituicao{Centro Universitário Filadélfia} % Nome da instituição
+\local{Londrina} % Cidade de publicação
+\data{2026} % Ano de publicação
+\preambulo{Curso de Bacharelado em Ciência da Computação} % Nome do curso
+\orientador{Mário Henrique Akihiko da Costa Adaniya} % Nome do orientador
+
+\frenchspacing
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Elementos pré-textuais %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pretextual
+
+% Campo de inclusão dos capítulos que complementam o Relatório Final de Estágio
+\imprimircapa
+
+%% Não mexer
+
+% O arquivo unifil.cls define o título do sumário como ``Summary''; a linha
+% abaixo restabelece o rótulo em português.
+\renewcommand{\contentsname}{Sumário}
+
+\tableofcontents*
+
+\listoffigures
+
+  \setlength\absleftindent{0cm}
+  \setlength\absrightindent{0cm}
+
+  % fonte do ambiente
+  \abstracttextfont{\normalfont\normalsize}
+
+  % indentação e espaçamento entre parágrafos
+  \setlength{\absparindent}{0pt}
+  \setlength{\absparsep}{18pt}
+
+\textual
+
+\renewcommand{\ABNTEXchapterfont}{\fontfamily{cmr}\fontseries{b}\selectfont}
+\renewcommand{\ABNTEXchapterfontsize}{\Large}
+
+\renewcommand{\ABNTEXsectionfont}{\uppercase{\fontfamily{cmr}\fontseries{b}\selectfont}}
+\renewcommand{\ABNTEXsectionfontsize}{\large}
+
+% Inclusão dos capítulos que fazem parte do relatório final de estágio
+
+\include{./cap-introducao.tex}
+\include{./cap-referencial-teorico.tex}
+\include{./cap-metodologia.tex}
+\include{./cap-requisitos.tex}
+\include{./cap-workflow-bpmn.tex}
+\include{./cap-implementacao.tex}
+\include{./cap-consideracoes-finais.tex}
+
+\cleardoublepage
+
+\postextual
+
+%% Colocar as referências conforme as normas da ABNT, somente as utilizadas no
+%% trabalho e presentes neste manuscrito.
+%
+% Todas as referências devem estar formatadas no formato .bib no arquivo
+% bibliografia.bib para geração automática.
+
+\bibliography{bibliografia}{}
+
+\end{document}

@@ -1,0 +1,65 @@
+\chapter{Introdução}\label{cap:introducao}
+
+Este relatório descreve as atividades desenvolvidas durante o estágio obrigatório do Curso de Bacharelado em Ciência da Computação do Centro Universitário Filadélfia (Unifil), realizadas na empresa concedente NPI -- Núcleo de Práticas em Informática, sob supervisão direta de João Vitor da Costa Andrade e orientação acadêmica do professor Mário Henrique Akihiko da Costa Adaniya. O objeto do estágio é o desenvolvimento do S.R.I. -- Sistema de Rotas Inteligentes, aplicativo móvel destinado ao planejamento, à execução e à reutilização de rotas de coleta e entrega.
+
+\section{Contextualização}
+
+O crescimento das cidades e a concentração de atividades econômicas em áreas urbanas ampliaram de forma significativa a demanda por serviços de transporte e de entrega. A chamada logística de última milha, que corresponde ao trecho final do trajeto entre o centro de distribuição e o destinatário, passou a responder por parcela relevante do custo operacional das empresas e dos profissionais autônomos do setor. Nesse cenário, a definição prévia do trajeto a ser percorrido deixa de ser uma tarefa acessória e torna-se um fator determinante de produtividade, de consumo de combustível e de cumprimento de prazos.
+
+A literatura de pesquisa operacional trata esse conjunto de decisões como problemas de roteirização de veículos, nos quais se busca determinar a sequência de atendimento de um conjunto de pontos que minimize o custo total do deslocamento, respeitadas as restrições operacionais existentes \cite{cunha2000}. Tais problemas pertencem à classe dos problemas combinatórios de difícil solução exata em escala real, o que justifica a adoção de heurísticas capazes de produzir soluções de boa qualidade em tempo compatível com o uso em campo \cite{cormen2012}.
+
+Do ponto de vista tecnológico, o barateamento dos dispositivos móveis com receptor de GPS e a popularização de serviços de mapas e de geocodificação tornaram viável levar esse tipo de processamento para o próprio veículo do entregador. Ainda assim, a oferta de aplicativos permanece concentrada em soluções de navegação genéricas, projetadas para deslocamentos casuais entre dois pontos, e não para a rotina repetitiva de quem realiza múltiplas paradas por dia \cite{sriVisao2025}.
+
+\section{Descrição do problema}
+
+O levantamento de requisitos realizado junto ao usuário do sistema, registrado no documento Pedido do Investidor, identificou que o planejamento das rotas de coleta e entrega é feito atualmente de forma inteiramente manual. O profissional precisa informar, um a um, cada endereço de destino em aplicativos de navegação genéricos e repetir esse procedimento a cada novo trajeto, mesmo quando a sequência de pontos visitados é praticamente a mesma todos os dias \cite{sriPedido2025}.
+
+Desse diagnóstico derivam três problemas centrais. O primeiro é a ausência de suporte a rotas em circuito, isto é, trajetos que partem de um ponto inicial, percorrem uma sequência de paradas e retornam ao ponto de origem, modalidade que corresponde à operação típica de coleta e de retorno a uma base ou agência. O segundo é a inexistência de rotas salvas: como não há armazenamento dos trajetos já planejados, todo o trabalho de definição precisa ser refeito a cada jornada, o que faz com que o tempo gasto no planejamento concorra diretamente com o tempo disponível para a execução do serviço. O terceiro é a fragmentação entre o momento do planejamento e o momento da execução, uma vez que as decisões tomadas na etapa de organização não são transportadas de maneira estruturada para o deslocamento.
+
+A consequência dessas limitações é um ciclo operacional ineficiente, caracterizado por deslocamentos redundantes, consumo desnecessário de combustível, atrasos na entrega e desgaste do profissional, conforme relatado pelo próprio usuário durante a entrevista de levantamento de requisitos \cite{sriPedido2025}.
+
+\section{Solução proposta}
+
+O S.R.I. -- Sistema de Rotas Inteligentes é um aplicativo móvel que centraliza o cadastro de pontos de interesse, a geração de rotas ponto a ponto e em circuito e o armazenamento de trajetos recorrentes para reutilização posterior. O sistema parte do princípio de que o usuário já conhece os locais que precisa atender e precisa apenas que o aplicativo organize essas paradas em uma sequência viável e econômica.
+
+Para atender a esse princípio, o aplicativo é estruturado em quatro casos de uso principais: o gerenciamento de locais, que corresponde ao cadastro, à consulta, à atualização e à exclusão dos pontos utilizados como paradas; a geração de rotas, que transforma um conjunto de locais selecionados em um trajeto ordenado; o gerenciamento de rotas salvas, que permite registrar, recuperar e reexecutar os trajetos recorrentes; e o gerenciamento de usuário, que controla o acesso ao sistema.
+
+A escolha tecnológica recaiu sobre o framework Flutter, com a linguagem Dart, o que permite manter um único código-fonte para as versões Android e iOS \cite{flutter2024}. A persistência dos dados é feita localmente em banco de dados SQLite, o que garante o funcionamento do cadastro de locais mesmo em situações de conectividade instável \cite{sqlite2024}. A exibição cartográfica e a conversão de endereços em coordenadas geográficas apoiam-se em serviços abertos do OpenStreetMap, evitando a dependência de chaves de API pagas \cite{osm2024}.
+
+\section{Justificativa}
+
+A justificativa do projeto sustenta-se em quatro argumentos. O primeiro é o foco no público-alvo: as soluções disponíveis no mercado, como Google Maps, Waze e Uber, foram concebidas para deslocamentos casuais e oferecem otimização de viagens individuais, mas não contemplam a criação de circuitos personalizados nem o reúso de trajetos por entregadores independentes \cite{sriVisao2025}. O segundo é a funcionalidade ausente nesses aplicativos: a possibilidade de salvar um circuito completo e reexecutá-lo em outra data responde diretamente à rotina repetitiva do setor.
+
+O terceiro argumento é a eficiência operacional. Ao transferir para o sistema a tarefa de ordenação das paradas, reduz-se o tempo dedicado ao planejamento e diminui-se a probabilidade de deslocamentos redundantes, com efeito direto sobre o custo do combustível e sobre a capacidade diária de atendimentos. O quarto argumento é a acessibilidade econômica: todo o desenvolvimento foi conduzido com ferramentas e bibliotecas de código aberto, o que elimina custos de licenciamento e permite que o aplicativo seja distribuído gratuitamente \cite{redhatOpenSource2024}.
+
+Por fim, o projeto cumpre a função formativa de aplicar, em um problema real e com usuário real, os conhecimentos de engenharia de software, de modelagem de sistemas, de banco de dados e de programação para dispositivos móveis adquiridos ao longo do curso.
+
+\section{Objetivos}
+
+\subsection{Objetivo geral}
+
+Desenvolver um aplicativo móvel para criação, gerenciamento e reutilização de rotas inteligentes, ponto a ponto e em circuito, proporcionando maior eficiência no deslocamento de entregadores e motoristas autônomos.
+
+\subsection{Objetivos específicos}
+
+\begin{itemize}
+    \item Implementar um módulo de cadastro, consulta, atualização e exclusão de pontos de interesse, utilizando a biblioteca sqflite para persistência local e garantindo a visualização imediata dos marcadores no mapa após o cadastro.
+    \item Implementar a funcionalidade de rotas em circuito, com retorno ao ponto inicial.
+    \item Possibilitar o armazenamento de rotas salvas para reutilização em entregas futuras.
+    \item Garantir tempo de resposta inferior a 30 segundos no cálculo das rotas \cite{sriEspecComp2025}.
+    \item Proporcionar uma interface amigável, adaptada para uso em movimento.
+    \item Integrar serviços de geolocalização e de geocodificação para o cálculo dos trajetos.
+    \item Documentar o processo de desenvolvimento conforme o processo RUP, produzindo os artefatos de requisitos, de modelagem e de projeto do sistema \cite{sriEspecComp2025}.
+\end{itemize}
+
+\section{Organização do trabalho}
+
+Além desta introdução, o presente relatório está organizado em mais seis capítulos. O Capítulo \ref{cap:referencial-teorico} apresenta o referencial teórico que fundamenta o trabalho, tratando do processo RUP, da linguagem de modelagem UML, da notação BPMN, do desenvolvimento móvel multiplataforma com Flutter e Dart, da persistência local com SQLite, dos serviços de geolocalização e geocodificação baseados no OpenStreetMap e dos problemas de roteamento de veículos e suas heurísticas de solução. O Capítulo \ref{cap:metodologia} descreve a metodologia adotada, detalhando a aplicação das fases do RUP, o método de levantamento de requisitos, o fluxo de trabalho empregado e os critérios de validação definidos.
+
+O Capítulo \ref{cap:requisitos} consolida os requisitos do sistema, apresentando os casos de uso, os requisitos funcionais e não funcionais, as premissas e as dependências do produto, além dos artefatos de modelagem produzidos. O Capítulo \ref{cap:workflow-bpmn} documenta o processo de negócio atual, na notação BPMN, e discute as ineficiências que motivam a automação. O Capítulo \ref{cap:implementacao} descreve a implementação do sistema, apresentando a organização do código em camadas, o ambiente e as bibliotecas utilizados, a evolução do esquema do banco de dados local, a implementação de cada caso de uso, o algoritmo de ordenação das paradas, as decisões de tratamento de falhas e os resultados da verificação por análise estática e por testes automatizados. Por fim, o Capítulo \ref{cap:consideracoes-finais} reúne as considerações finais, os resultados alcançados, as dificuldades enfrentadas, as limitações identificadas e os trabalhos futuros previstos.
+
+\section{Síntese dos resultados}
+
+A versão consolidada do sistema contempla os quatro casos de uso previstos na especificação, acrescidos da funcionalidade de navegação assistida. A verificação automatizada não registrou erros na análise estática do código-fonte e aprovou a totalidade dos noventa e cinco testes automatizados da suíte, que abrangem desde o cálculo de distâncias geográficas e a ordenação das paradas até as migrações do banco de dados, as regras de autenticação e o fluxo de criação de conta. A compilação completa do aplicativo foi concluída com sucesso.
+
+A qualidade do algoritmo de ordenação das paradas foi confrontada com a solução ótima obtida por força bruta em uma instância de pequeno porte, tendo o resultado heurístico permanecido dentro da margem de quinze por cento do ótimo. As métricas de tempo de resposta e de assertividade declaradas nos requisitos permanecem pendentes de medição em condições reais de uso, conforme discutido no Capítulo \ref{cap:consideracoes-finais}.

@@ -1,0 +1,141 @@
+====================================================================
+RELATÓRIO FINAL DE ESTÁGIO — S.R.I. (Sistema de Rotas Inteligentes)
+Instruções de compilação
+====================================================================
+
+1. ARQUIVO PRINCIPAL
+   relatorio-final.tex
+   Todos os capítulos são incluídos por ele com \include{...}.
+
+2. MOTOR (ENGINE) DE COMPILAÇÃO
+   pdfLaTeX  (NÃO use XeLaTeX nem LuaLaTeX)
+
+   O modelo unifil.cls carrega inputenc com a opção utf8, o que exige
+   o pdfLaTeX. O documento também usa acentuação em português
+   diretamente no código-fonte.
+
+3. ORDEM DE COMPILAÇÃO
+   Como há bibliografia BibTeX e referências cruzadas (\ref, \cite,
+   sumário e lista de figuras), a compilação precisa de quatro passos:
+
+     1) pdflatex relatorio-final.tex
+     2) bibtex   relatorio-final
+     3) pdflatex relatorio-final.tex
+     4) pdflatex relatorio-final.tex
+
+   Ou, se preferir, use o Makefile incluído nesta pasta:
+
+     make tcc        (Linux/macOS ou WSL, com make instalado)
+     make clean      (remove os arquivos auxiliares)
+
+4. ARQUIVOS JÁ INCLUÍDOS NESTA PASTA (NÃO é necessário baixar nada)
+   - unifil.cls          modelo da UniFil, baseado em abnTeX2
+   - logo-unifil.pdf     logotipo usado na capa (ver \imprimircapa)
+   - bibliografia.bib    referências em formato BibTeX
+   - imagens/            figuras do trabalho, com nomes sem espaços
+                         e sem acentos
+   - Makefile            automação da compilação
+
+5. COMO COMPILAR NO OVERLEAF
+   a) Crie um novo projeto vazio (Blank Project) e apague o main.tex
+      criado automaticamente.
+   b) Envie TODOS os arquivos desta pasta, preservando a estrutura:
+      o .tex principal, os cap-*.tex, bibliografia.bib, unifil.cls,
+      logo-unifil.pdf, Makefile e a pasta imagens/.
+   c) Em Menu > Compiler, selecione "pdfLaTeX".
+   d) Defina relatorio-final.tex como Main document
+      (Menu > Main document).
+   e) Clique em Recompile. O Overleaf executa automaticamente o
+      bibtex e as passagens adicionais necessárias.
+
+6. PÁGINAS DE REFERÊNCIA CRUZADA
+   O sumário e a lista de figuras só aparecem completos a partir da
+   segunda compilação. Se algo aparecer como "??", recompile.
+
+7. IMAGENS
+   As figuras são referenciadas como imagens/arquivo.png, sem espaços
+   e sem acentos nos nomes. Mantenha exatamente estes nomes ao
+   substituir qualquer diagrama por uma versão atualizada:
+
+     imagens/caso-de-uso.png
+     imagens/diagrama-de-classes.png
+     imagens/der.png
+     imagens/implantacao.png
+     imagens/sequencia-gerenciar-locais.png
+     imagens/estado-gerenciar-locais.png
+     imagens/workflow-as-is.png
+     imagens/diagrama-de-camadas.png
+
+   Os arquivos diagrama-de-classes.png, der.png e diagrama-de-camadas.png
+   NÃO foram desenhados à mão: eles são gerados a partir das fontes
+   PlantUML da pasta diagramas/. Para regerar depois de qualquer ajuste:
+
+     java -jar plantuml.jar -charset UTF-8 -tpng -o ../imagens \
+          diagramas/diagrama-de-classes.puml diagramas/der.puml \
+          diagramas/diagrama-de-camadas.puml
+
+   O diagrama de classes foi dividido em duas figuras de propósito: em
+   um documento A4 a figura ocupa a largura do texto, e um diagrama
+   largo reduz a fonte a um tamanho ilegível no papel. Ao acrescentar
+   novas classes, prefira ampliar uma figura existente em vez de alargá-la.
+
+8. FIGURAS LARGAS (ROTACIONADAS)
+   Duas figuras são naturalmente largas e ficariam com fonte de cerca de
+   4,5 pt se fossem reduzidas à largura do texto. Elas estão rotacionadas
+   em 90 graus, com a chave [angle=90,width=21cm], para que a dimensão
+   limitante seja a altura da página:
+
+     - imagens/sequencia-gerenciar-locais.png   (cap-requisitos.tex)
+     - imagens/workflow-as-is.png               (cap-workflow-bpmn.tex)
+
+   Isso exige virar a página para ler a figura, prática usual na ABNT
+   para figuras em formato paisagem. Se não quiser esse comportamento,
+   substitua a chave por [width=0.8\linewidth] e troque o posicionamento
+   [p] por [!ht] nos dois ambientes figure.
+
+9. CAPÍTULOS DO RELATÓRIO
+     cap-introducao.tex          Introdução e síntese dos resultados
+     cap-referencial-teorico.tex RUP, UML, BPMN, Flutter, SQLite, OSM, VRP
+     cap-metodologia.tex         Fases do RUP, levantamento, validação
+     cap-requisitos.tex          Casos de uso, modelos, RF e RNF
+     cap-workflow-bpmn.tex       Processo as is e ineficiências
+     cap-implementacao.tex       Camadas, banco, casos de uso, algoritmo,
+                                 tratamento de falhas e testes
+     cap-consideracoes-finais.tex Resultados, dificuldades e limitações
+
+10. COMO ACRESCENTAR AS TELAS DO APLICATIVO
+   O relatório descreve a interface em texto, mas ainda NÃO inclui
+   capturas de tela do aplicativo. Para incluí-las:
+
+   a) Execute o aplicativo no emulador e capture as telas desejadas,
+      salvando os arquivos na pasta imagens/ com nomes sem espaços e
+      sem acentos, por exemplo:
+        imagens/tela-login.png
+        imagens/tela-pontos.png
+        imagens/tela-montar-rota.png
+        imagens/tela-rota-mapa.png
+        imagens/tela-navegacao.png
+
+   b) No capítulo cap-implementacao.tex, dentro da subseção
+      correspondente, insira o ambiente abaixo (e cite a figura no
+      texto com \ref antes de exibi-la):
+
+        \begin{figure}[!ht]
+            \centering
+            \caption{Tela de montagem da rota}
+            \label{fig:tela-montar-rota}
+            \includegraphics[width=0.42\linewidth]{imagens/tela-montar-rota.png}
+            \vspace{2pt}
+            \footnotesize Fonte: o próprio autor (2026)
+        \end{figure}
+
+      Para telas de celular, larguras entre 0.35 e 0.45\linewidth
+      produzem um tamanho adequado. Duas capturas lado a lado podem ser
+      colocadas em um mesmo figure com dois minipage.
+
+11. OBSERVAÇÃO SOBRE ESTA MÁQUINA
+   Não há distribuição LaTeX instalada neste computador. O .tex foi
+   escrito para ser compilado no Overleaf (pdfLaTeX). Caso se opte por
+   compilar localmente no futuro, é necessária uma distribuição TeX
+   Live ou MiKTeX com os pacotes do abnTeX2 instalados.
+====================================================================

@@ -1,0 +1,32 @@
+@startuml
+' Fonte do diagrama de camadas do relatorio final.
+' Renderizado com: java -jar plantuml.jar -charset UTF-8 -tpng diagrama-de-camadas.puml
+'
+' Mostra a organizacao em camadas adotada na refatoracao: as telas dependem
+' dos repositorios, que concentram as regras de negocio; os repositorios usam
+' servicos especializados e DAOs; somente os DAOs falam com o banco.
+'
+' Cada camada e uma unica caixa com o texto quebrado em linhas, para manter a
+' figura estreita e, portanto, legivel quando reduzida a largura do texto.
+
+skinparam defaultFontSize 14
+skinparam shadowing false
+skinparam linetype ortho
+skinparam ArrowFontSize 12
+skinparam nodesep 10
+skinparam ranksep 26
+
+rectangle "Apresentacao (Flutter)\ntelas, widgets e tema" as apresentacao
+rectangle "Regras de negocio\nPontoRepository e RotaRepository" as negocio
+rectangle "Servicos\nGeocodificacao, Roteamento, Otimizador,\nAutenticacao, Localizacao e Navegacao" as servicos
+rectangle "Persistencia\nPontoDao, RotaDao, UsuarioDao,\nGeocacheDao e DatabaseHelper" as persistencia
+database "SQLite local\nRotasApp.db (versao 3)" as banco
+cloud "Servicos externos\nNominatim e OSRM" as externos
+
+apresentacao --> negocio : usa
+negocio --> servicos : delega
+negocio --> persistencia : le e grava
+persistencia --> banco : SQL
+servicos ..> externos : HTTP
+
+@enduml

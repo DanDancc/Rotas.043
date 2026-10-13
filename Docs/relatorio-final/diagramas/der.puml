@@ -1,0 +1,73 @@
+@startuml
+' Fonte do diagrama de entidade e relacionamento do relatorio final.
+' Renderizado com: java -jar plantuml.jar -tpng der.puml
+
+skinparam defaultFontSize 12
+skinparam shadowing false
+skinparam linetype ortho
+hide circle
+hide methods
+
+entity "usuarios" as usuarios {
+  * id : INTEGER <<PK>>
+    --
+  * nome : TEXT
+  * email : TEXT <<UNIQUE>>
+  * senha_hash : TEXT
+  * salt : TEXT
+  * data_cadastro : TEXT
+}
+
+entity "pontos" as pontos {
+  * id : INTEGER <<PK>>
+    --
+  * nome : TEXT
+  * endereco : TEXT
+    latitude : REAL
+    longitude : REAL
+    id_usuario : INTEGER <<FK>>
+}
+
+entity "rotas" as rotas {
+  * id : INTEGER <<PK>>
+    --
+  * nome : TEXT
+  * tipo : TEXT
+    distancia_total : REAL
+    duracao_total : REAL
+    geometria : TEXT
+  * data_criacao : TEXT
+    id_usuario : INTEGER <<FK>>
+    fonte_calculo : TEXT
+}
+
+entity "rota_pontos" as rota_pontos {
+  * id : INTEGER <<PK>>
+    --
+  * id_rota : INTEGER <<FK>>
+  * id_ponto : INTEGER <<FK>>
+  * ordem_de_visita : INTEGER
+}
+
+entity "sessao" as sessao {
+  * id : INTEGER <<PK>> (sempre 1)
+    --
+    id_usuario : INTEGER <<FK>>
+    data_login : TEXT
+}
+
+entity "geocache" as geocache {
+  * endereco : TEXT <<PK>>
+    --
+  * latitude : REAL
+  * longitude : REAL
+  * data_consulta : TEXT
+}
+
+usuarios ||--o{ pontos : "possui"
+usuarios ||--o{ rotas : "possui"
+usuarios ||--o| sessao : "sessao ativa"
+rotas ||--o{ rota_pontos : "compoe"
+pontos ||--o{ rota_pontos : "participa de"
+
+@enduml
