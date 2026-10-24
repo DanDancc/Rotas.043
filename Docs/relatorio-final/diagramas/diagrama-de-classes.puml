@@ -1,0 +1,69 @@
+@startuml
+' Fonte do diagrama de classes do relatorio final (modelo de dominio).
+' Renderizado com: java -jar plantuml.jar -charset UTF-8 -tpng diagrama-de-classes.puml
+'
+' Mantido estreito de proposito: em um documento A4 a figura ocupa a largura
+' do texto, entao um diagrama muito largo reduz a fonte a um tamanho ilegivel.
+
+skinparam defaultFontSize 12
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam nodesep 22
+skinparam ranksep 34
+hide empty members
+
+class Ponto {
+  - id : int
+  - nome : String
+  - endereco : String
+  - latitude : double
+  - longitude : double
+  - idUsuario : int
+  + temCoordenadas() : bool
+  + coordenada() : LatLng
+  + toMap() : Map
+  + fromMap(mapa) : Ponto
+}
+
+class Rota {
+  - id : int
+  - nome : String
+  - tipo : TipoRota
+  - distanciaTotal : double
+  - duracaoTotal : double
+  - geometria : List<LatLng>
+  - dataCriacao : DateTime
+  - fonteCalculo : FonteCalculo
+  - pontos : List<Ponto>
+  + quantidadePontos() : int
+  + distanciaFormatada() : String
+  + duracaoFormatada() : String
+  + toMap() : Map
+}
+
+class Usuario {
+  - id : int
+  - nome : String
+  - email : String
+  - senhaHash : String
+  - salt : String
+  + primeiroNome() : String
+}
+
+enum TipoRota {
+  pontoAPonto
+  circuito
+}
+
+enum FonteCalculo {
+  osrm
+  local
+}
+
+Usuario "1" o-- "0..*" Ponto : possui
+Usuario "1" o-- "0..*" Rota : possui
+Rota "1" *-- "0..*" Ponto : ordem de visita
+Rota --> TipoRota
+Rota --> FonteCalculo
+
+@enduml

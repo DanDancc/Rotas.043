@@ -1,0 +1,75 @@
+@startuml
+' Fonte do diagrama de sequencia da geracao de rotas (UC02 - Gerar Rotas).
+' Renderizado com: java -jar plantuml.jar -charset UTF-8 -tpng sequencia-gerar-rota.puml
+'
+' Mostra a colaboracao entre as camadas durante o calculo de uma rota:
+' a tela valida a selecao, o repositorio orquestra a otimizacao e o
+' roteamento, e a rota so chega ao banco quando o usuario confirma o nome.
+
+skinparam defaultFontSize 12
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+skinparam maxMessageSize 240
+skinparam ParticipantPadding 6
+autonumber
+
+actor "Usuário" as Usuario
+participant "RotaFormPage\n(tela)" as Tela
+participant "RotaRepository\n(negócio)" as Repo
+participant "OtimizadorRota\n(serviço)" as Otimizador
+participant "Roteamento\n(serviço)" as Roteamento
+participant "OSRM\n(externo)" as OSRM
+participant "RotaDao\n(persistência)" as Dao
+database "SQLite\nRotasApp.db" as Banco
+
+== Seleção e cálculo ==
+
+Usuario -> Tela : seleciona os pontos, a modalidade\ne, se quiser, origem e destino
+Usuario -> Tela : toca em Calcular rota
+Tela -> Tela : valida a seleção\n(dois pontos localizados,\norigem e destino diferentes)
+
+alt seleção insuficiente
+  Tela --> Usuario : aviso e nenhum cálculo é feito
+else seleção válida
+  Tela -> Repo : calcular(pontos, tipo,\norigem, destino)
+
+  Repo -> Otimizador : otimizar(pontos, tipo,\norigem, destino)
+  note right of Otimizador
+    Descarta os pontos sem coordenadas,
+    aplica o vizinho mais próximo e
+    refina com 2-opt (ver o diagrama
+    de atividades da otimização).
+  end note
+  Otimizador --> Repo : ResultadoOtimizacao\n(ordem, distância, ganho)
+
+  Repo -> Roteamento : calcular(coordenadas, tipo)
+
+  alt OSRM responde dentro de 20 s
+    Roteamento -> OSRM : GET /route/v1/driving/...\n(até 25 coordenadas)
+    OSRM --> Roteamento : geometria, distância e duração
+    Roteamento --> Repo : ResultadoTrajeto\n(fonte = OSRM)
+  else falha, tempo esgotado ou percurso longo
+    Roteamento -> Roteamento : estima em linha reta\na 30 km/h
+    Roteamento --> Repo : ResultadoTrajeto\n(fonte = local, com aviso)
+  end
+
+  Repo --> Tela : PreviaRota\n(rota, otimização, trajeto)
+  Tela -> Usuario : exibe mapa, ordem numerada,\ndistância, duração, ganho\ne a origem do cálculo
+end
+
+== Gravação da rota ==
+
+opt usuário informa o nome e confirma
+  Usuario -> Tela : toca em Salvar rota
+  Tela -> Repo : salvar(previa, nome,\nidUsuario)
+  Repo -> Dao : inserir(rota)
+  Dao -> Banco : BEGIN TRANSACTION\ne INSERT INTO rotas
+  Dao -> Banco : INSERT INTO rota_pontos\n(ordem de visita)
+  Banco --> Dao : COMMIT
+  Dao --> Repo : id da rota
+  Repo --> Tela : id
+  Tela --> Usuario : confirmação e retorno à lista
+end
+
+@enduml

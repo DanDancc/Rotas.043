@@ -1,0 +1,60 @@
+@startuml
+' Fonte do diagrama de sequencia do gerenciamento de locais (UC01 - Gerenciar Locais).
+' Renderizado com: java -jar plantuml.jar -charset UTF-8 -tpng sequencia-gerenciar-locais.puml
+'
+' Fluxo posterior a refatoracao em camadas: a tela nao conhece o banco nem o
+' servico externo. O repositorio orquestra o cache de enderecos, a
+' geocodificacao e a gravacao, e trata a falha de rede sem perder o cadastro.
+
+skinparam defaultFontSize 12
+skinparam shadowing false
+skinparam maxMessageSize 230
+
+actor "Usuário" as usuario
+participant "FormPage\n(tela)" as tela
+participant "PontoRepository\n(negócio)" as repo
+participant "GeocodificacaoService\n(serviço)" as geo
+participant "GeocacheDao\n(persistência)" as cache
+participant "PontoDao\n(persistência)" as dao
+participant "Nominatim\n(externo)" as nominatim
+database "SQLite\nRotasApp.db" as bd
+
+note over usuario, tela
+  A tela apenas coleta os dados. Não acessa o banco
+  nem o serviço externo: delega ao repositório.
+end note
+
+== Cadastro de um local ==
+usuario -> tela : 1 digita nome e endereço e toca\nem "Salvar e buscar no mapa"
+tela -> tela : 2 valida o formulário
+alt campos vazios
+  tela --> usuario : 3 indica os campos obrigatórios\n(nenhuma chamada é feita)
+else formulário válido
+  tela -> repo : 4 salvar(nome, endereço,\nexistente: nulo, idUsuario)
+  repo -> geo : 5 buscarCoordenadas(endereço)
+  geo -> cache : 6 buscar(endereço)
+  cache --> geo : 7 coordenada gravada ou nulo
+  alt endereço ainda não está no cache
+    geo -> nominatim : 8 GET /search?q=endereço\n(intervalo mínimo de 1,1 s)
+    nominatim --> geo : 9 latitude e longitude
+    geo -> cache : 10 salvar(endereço, lat, lon)
+    cache -> bd : 11 INSERT OR REPLACE INTO geocache
+  end
+  geo --> repo : 12 CoordenadaEncontrada\n(do cache ou do serviço externo)
+  alt falha de rede ou endereço não encontrado
+    repo --> repo : 13 registra o aviso e segue\nsem coordenadas
+  end
+  repo -> dao : 14 inserir(ponto)
+  dao -> bd : 15 INSERT INTO pontos
+  bd --> dao : 16 id gerado
+  dao --> repo : 17 id
+  repo --> tela : 18 ResultadoSalvarPonto\n(ponto gravado e aviso)
+  tela --> usuario : 19 fecha o formulário e informa o resultado
+end
+
+note over repo, dao
+  Na edição de um ponto, se o endereço não foi alterado,
+  as coordenadas já gravadas são reaproveitadas e os passos
+  5 a 12 não são executados: nenhuma consulta externa ocorre.
+end note
+@enduml

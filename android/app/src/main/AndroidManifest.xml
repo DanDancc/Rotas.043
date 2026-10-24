@@ -1,6 +1,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Necessária para consultar o serviço de geocodificação (Nominatim) e o
+         serviço de roteamento (OSRM). Sem esta declaração as requisições HTTP
+         falham nas versões de release do aplicativo. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <!-- Necessárias para a navegação assistida, que acompanha a posição do
+         veículo durante a execução da rota. -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
     <application
-        android:label="rotas_app"
+        android:label="S.R.I. Rotas"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

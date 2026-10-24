@@ -1,0 +1,85 @@
+\chapter{Metodologia}\label{cap:metodologia}
+
+Este capítulo descreve a metodologia empregada no desenvolvimento do S.R.I., abrangendo o processo de desenvolvimento adotado, o método de levantamento de requisitos, o fluxo de trabalho e as ferramentas utilizadas e, por fim, os critérios de validação e as métricas de aceitação definidas para o projeto.
+
+\section{Processo de desenvolvimento adotado}
+
+O desenvolvimento seguiu o processo RUP, com suas quatro fases executadas de forma iterativa e incremental \cite{kruchten2003}. A adoção desse processo decorre de exigência do próprio contexto do estágio, uma vez que a documentação do projeto é produzida segundo os artefatos previstos pelo RUP, e mostrou-se adequada por permitir que cada iteração entregasse uma versão executável e verificável do aplicativo \cite{sriEspecComp2025}.
+
+Na fase de concepção foram definidos o escopo do sistema, os envolvidos e as necessidades de alto nível, formalizados no documento de Visão \cite{sriVisao2025}. Ainda nessa fase, a entrevista com o usuário permitiu registrar as dores da operação atual e as expectativas quanto ao produto, dando origem ao documento Pedido do Investidor \cite{sriPedido2025}.
+
+Na fase de elaboração foram detalhados os requisitos, construídos os modelos de casos de uso, de classes, de entidade e relacionamento, de sequência, de estados e de implantação, e documentados os requisitos não funcionais. Essa fase correspondeu, no projeto, ao maior esforço de documentação, uma vez que os artefatos produzidos passaram a servir de referência para a implementação subsequente \cite{sriEspecUC2026, sriEspecComp2025}.
+
+A fase de construção concentrou a implementação do aplicativo, organizada em iterações que privilegiaram o caso de uso de gerenciamento de locais, escolhido como escopo da primeira banca de avaliação por ser pré-requisito para a geração de rotas \cite{sriEspecUC2026}. Cada iteração compreendeu a implementação das telas e das operações de persistência, a verificação estática do código, a execução dos testes automatizados e a validação manual em emulador.
+
+A fase de transição, por fim, compreende a consolidação da versão avaliada, a verificação dos requisitos de desempenho e de confiabilidade, a correção dos defeitos remanescentes e a preparação do pacote de instalação para distribuição. A Tabela \ref{tab:fases-rup} sintetiza as fases do processo, as atividades executadas e os artefatos produzidos.
+
+\begin{table}[!ht]
+    \centering
+    \caption{Fases do processo RUP aplicadas ao projeto}
+    \label{tab:fases-rup}
+    \begin{tabular}{p{3cm} p{6cm} p{6cm}}
+        \hline
+        \textbf{Fase} & \textbf{Atividades executadas} & \textbf{Artefatos produzidos} \\
+        \hline
+        Concepção & Definição do escopo, identificação dos envolvidos, entrevista com o usuário e análise das soluções concorrentes & Documento de Visão e Pedido do Investidor \\
+        \hline
+        Elaboração & Detalhamento dos requisitos, modelagem dos casos de uso, das classes, dos dados e da implantação & Especificação de Caso de Uso, Especificação Complementar, Glossário e diagramas UML \\
+        \hline
+        Construção & Implementação das funcionalidades, persistência local, integração com serviços de mapa e geocodificação & Código-fonte do aplicativo e testes automatizados \\
+        \hline
+        Transição & Verificação dos requisitos de desempenho, correção de defeitos e empacotamento & Versão avaliada do aplicativo e registro das medições \\
+        \hline
+    \end{tabular}
+    \vspace{2pt}
+    \footnotesize Fonte: o próprio autor (2026)
+\end{table}
+
+\section{Levantamento de requisitos}
+
+O levantamento de requisitos apoiou-se em três procedimentos complementares. O primeiro foi a entrevista estruturada com o usuário do sistema, que acumula as funções de investidor e de principal interessado no produto. A entrevista foi organizada em blocos temáticos, contemplando o perfil do usuário, a avaliação do problema, o ambiente de uso, a oportunidade identificada e as expectativas quanto à confiabilidade, ao desempenho e às necessidades de suporte \cite{sriPedido2025}.
+
+O segundo procedimento foi a análise do processo de negócio vigente, que resultou na descrição do workflow atual na notação BPMN, apresentada no Capítulo \ref{cap:workflow-bpmn}. Essa análise permitiu identificar as atividades manuais que o sistema deveria substituir e verificar a aderência entre as funcionalidades previstas e a rotina efetivamente executada na operação.
+
+O terceiro procedimento foi a pesquisa de mercado, na qual se compararam as soluções Google Maps, Waze e Uber quanto a forças e fraquezas. A análise concluiu que as três alternativas oferecem boa confiabilidade de navegação e abrangência de dados, mas não contemplam a criação de rotas em circuito personalizadas nem o armazenamento de trajetos recorrentes para reutilização por entregadores independentes, lacuna que delimita o posicionamento do S.R.I. \cite{sriVisao2025}.
+
+Os requisitos resultantes foram registrados em três documentos complementares: a Especificação de Caso de Uso, que descreve os fluxos de eventos de cada funcionalidade \cite{sriEspecUC2026}; a Especificação Complementar, que reúne os requisitos de funcionalidade, utilidade, confiabilidade, desempenho, suportabilidade, interfaces e licença \cite{sriEspecComp2025}; e o Glossário, que fixa a terminologia do domínio e evita ambiguidades na interpretação dos demais artefatos \cite{sriGlossario2026}.
+
+\section{Fluxo de trabalho e ferramentas}
+
+O controle de versão foi realizado com o sistema Git, hospedado na plataforma GitHub, o que permitiu manter o histórico completo das alterações do código-fonte e documentar a evolução do projeto ao longo das iterações \cite{git2024, github2024}. A organização do repositório separou o código do aplicativo dos documentos do projeto, de modo que a documentação e a implementação evoluíssem de forma rastreável.
+
+A escrita e a estruturação do código foram realizadas no Visual Studio Code, ambiente escolhido por sua leveza e pela disponibilidade de extensões específicas para a linguagem Dart e para o framework Flutter \cite{vscode2024}. Para a execução e a validação do aplicativo, utilizou-se o emulador de dispositivo virtual fornecido pelo Android Studio, o que permitiu verificar o comportamento das telas, das permissões de localização e da persistência local sem a dependência de um aparelho físico \cite{androidstudio2024}.
+
+O ciclo de trabalho adotado em cada iteração compreendeu quatro etapas: a implementação da funcionalidade prevista; a execução da análise estática do código; a execução dos testes automatizados; e a validação manual do comportamento no emulador. Esse ciclo, repetido a cada incremento, permitiu que os defeitos fossem identificados no momento em que eram introduzidos, reduzindo o custo de correção \cite{sommerville2019}.
+
+\section{Critérios de validação e métricas de aceitação}
+
+A validação do sistema foi conduzida em três níveis. O primeiro nível é a análise estática, executada por meio da ferramenta de análise do próprio ambiente Flutter, que verifica o código-fonte quanto a erros de tipagem, a más práticas de programação e a violações das regras de estilo configuradas no projeto \cite{flutter2024}. O segundo nível é a verificação por testes automatizados, que exercitam as operações de persistência e as regras de ordenação dos pontos, garantindo que alterações posteriores não introduzam regressões nas funcionalidades já validadas \cite{sommerville2019}. O terceiro nível é o teste manual, executado no emulador, no qual se percorrem os fluxos básicos e alternativos descritos na especificação de caso de uso, verificando-se o comportamento da interface, as mensagens de retorno e a consistência dos dados exibidos \cite{sriEspecUC2026}.
+
+Além dos critérios qualitativos, o projeto declarou métricas de aceitação mensuráveis, derivadas das expectativas registradas pelo usuário na entrevista de levantamento de requisitos. A primeira métrica estabelece que o tempo necessário para disponibilizar a resposta de uma requisição deve ser inferior a 30 segundos, sendo que uma requisição acima desse limite caracteriza falha de comunicação entre o sistema e a fonte de dados \cite{sriEspecComp2025}. A segunda métrica estabelece que o aplicativo deve apresentar assertividade de pelo menos 70\% na criação de rotas, entendida como a proporção de rotas geradas que o usuário considera adequadas para execução \cite{sriPedido2025}.
+
+Como critérios complementares, o sistema deve estar disponível em tempo integral na sua versão mais recente, exigir autenticação prévia do usuário para acesso às funcionalidades e operar em dispositivos móveis com acesso à internet \cite{sriEspecComp2025}. A Tabela \ref{tab:metricas} reúne as métricas de aceitação e a forma de verificação prevista para cada uma.
+
+\begin{table}[!ht]
+    \centering
+    \caption{Métricas de aceitação e forma de verificação}
+    \label{tab:metricas}
+    \begin{tabular}{p{6cm} p{4cm} p{5cm}}
+        \hline
+        \textbf{Métrica} & \textbf{Critério} & \textbf{Forma de verificação} \\
+        \hline
+        Tempo de resposta da requisição & Inferior a 30 segundos & Cronometragem das chamadas aos serviços de geocodificação e de roteamento \\
+        \hline
+        Assertividade na criação de rotas & No mínimo 70\% & Avaliação das rotas geradas pelo usuário do sistema \\
+        \hline
+        Disponibilidade & Integral & Verificação de disponibilidade da versão mais recente do aplicativo \\
+        \hline
+        Autenticação & Obrigatória & Teste manual do fluxo de acesso ao sistema \\
+        \hline
+    \end{tabular}
+    \vspace{2pt}
+    \footnotesize Fonte: o próprio autor (2026), com base em \citeonline{sriEspecComp2025} e \citeonline{sriPedido2025}
+\end{table}
+
+Cabe registrar que o estágio foi acompanhado por relatórios periódicos de orientação direta, nos quais se avaliaram o interesse e a iniciativa no trabalho, o atendimento às necessidades propostas, a formação teórica aplicada nas atividades desenvolvidas, os contatos com a empresa concedente, a assiduidade e a pontualidade e a criatividade e sociabilidade. No mês de abril de 2026, a carga horária registrada foi de 16 horas, sob supervisão direta de João Vitor da Costa Andrade.

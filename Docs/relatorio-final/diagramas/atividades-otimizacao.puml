@@ -1,0 +1,51 @@
+@startuml
+' Fonte do diagrama de atividades da otimizacao das paradas (UC02 - Gerar Rotas).
+' Renderizado com: java -jar plantuml.jar -charset UTF-8 -tpng atividades-otimizacao.puml
+'
+' Descreve o algoritmo de OtimizadorRotaService: a heuristica construtiva do
+' vizinho mais proximo e o refinamento 2-opt, com a preservacao da origem e do
+' destino escolhidos pelo usuario.
+
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam ArrowColor #333333
+skinparam activity {
+  BackgroundColor #F7F7F7
+  BorderColor #333333
+  DiamondBackgroundColor #FFFFFF
+  DiamondBorderColor #333333
+}
+
+start
+
+:Receber os pontos, a modalidade, a origem e o destino;
+
+if (há ao menos dois pontos com coordenadas?) then (não)
+  :Lançar DadosInvalidos\n(a tela exibe o aviso);
+  stop
+endif
+
+:Fixar a origem na partida e, no ponto a ponto,\no destino na chegada;
+note right: No circuito, o percurso fecha\nno ponto de partida.
+
+partition "Construção — vizinho mais próximo" {
+  repeat
+    :Escolher o ponto não visitado mais próximo;
+    note right: Escolhas locais não enxergam\no fechamento do ciclo.
+  repeat while (restam pontos?) is (sim)
+  :Somar a distância da ordem construída;
+}
+
+partition "Refinamento — 2-opt" {
+  repeat
+    :Testar cada par de arestas e inverter\no trecho que encurtar o percurso;
+    note right: O método elimina os cruzamentos\ndo traçado e para quando não há\nganho (limite de 50 passagens).\nA partida e, no ponto a ponto,\na chegada não são invertidas.
+  repeat while (houve ganho e passagens < 50?) is (sim)
+}
+
+:Calcular a distância final e o ganho;
+:Devolver ResultadoOtimizacao ao repositório;
+
+stop
+
+@enduml

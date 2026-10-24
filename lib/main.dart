@@ -1,22 +1,9 @@
 import 'package:flutter/material.dart';
-import 'screens/home_page.dart'; 
+
+import 'app.dart';
 
 void main() {
-  runApp(const MeuAplicativo());
-}
-
-class MeuAplicativo extends StatelessWidget {
-  const MeuAplicativo({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Rotas App',
-      debugShowCheckedModeBanner: false, // Tira faixa de Debug
-      theme: ThemeData(
-        primarySwatch: Colors.blue, 
-      ),
-      home: const HomePage(), // Define qual tela vai abrir primeiro
-    );//camel
-  }
+  // Necessário porque a inicialização do banco usa plugins de plataforma.
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const RotasApp());
 }

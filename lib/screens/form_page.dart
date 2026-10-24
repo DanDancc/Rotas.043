@@ -1,98 +1,82 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http; // requisição web
-import 'dart:convert'; // resposta do OSM
-import '../models/local_map.dart';
-import '../database/db_helper.dart';
 
+import '../core/dependencias.dart';
+import '../models/ponto.dart';
+import '../widgets/avisos.dart';
+import '../widgets/estados.dart';
+
+/// Cadastro e edição de um ponto de interesse (caso de uso UC01).
+///
+/// O endereço digitado é enviado ao serviço de geocodificação e as
+/// coordenadas resultantes são gravadas junto com o ponto. Quando a consulta
+/// falha, o ponto é salvo mesmo assim e um aviso explica como completar as
+/// coordenadas depois.
 class FormPage extends StatefulWidget {
-  // Recebe um ponto se for para Editar. Se for para Criar, será nulo (null).
-  final LocalMap? pontoParaEditar;
+  const FormPage({super.key, this.pontoParaEditar, this.idUsuario});
 
-  const FormPage({super.key, this.pontoParaEditar});
+  /// Ponto a editar; nulo quando se está criando um novo.
+  final Ponto? pontoParaEditar;
+
+  final int? idUsuario;
 
   @override
   State<FormPage> createState() => _FormPageState();
 }
 
 class _FormPageState extends State<FormPage> {
-  // Controladores para pegar o texto
+  final _formulario = GlobalKey<FormState>();
   final _nomeController = TextEditingController();
   final _enderecoController = TextEditingController();
-  
-  // Valida o formulário
-  final _formKey = GlobalKey<FormState>();
-  
-  // Variável para mostrar busca no mapa
-  bool _carregando = false; 
+
+  bool _carregando = false;
+
+  bool get _editando => widget.pontoParaEditar != null;
 
   @override
   void initState() {
     super.initState();
-    // Se recebemos um ponto para editar, preenchemos os campos com os dados dele
-    if (widget.pontoParaEditar != null) {
-      _nomeController.text = widget.pontoParaEditar!.nome;
-      _enderecoController.text = widget.pontoParaEditar!.endereco;
+    final ponto = widget.pontoParaEditar;
+    if (ponto != null) {
+      _nomeController.text = ponto.nome;
+      _enderecoController.text = ponto.endereco;
     }
   }
 
-  // busca as coordenadas e salva no banco
-  Future<void> _salvarPonto() async {
-    // 1. Verifica se os campos não estão vazios
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        _carregando = true;
-      });
+  @override
+  void dispose() {
+    _nomeController.dispose();
+    _enderecoController.dispose();
+    super.dispose();
+  }
 
-      String nome = _nomeController.text;
-      String enderecoTexto = _enderecoController.text;
-      double? lat = widget.pontoParaEditar?.latitude;
-      double? lon = widget.pontoParaEditar?.longitude;
+  Future<void> _salvar() async {
+    if (!_formulario.currentState!.validate()) return;
 
-      // 2. Busca Lat e Long no OSM
-      if (widget.pontoParaEditar == null || widget.pontoParaEditar!.endereco != enderecoTexto) {
-      try {
-        // Link de busca para o endereço digitado
-        final url = Uri.parse(
-            'https://nominatim.openstreetmap.org/search?q=$enderecoTexto&format=json&limit=1');
-        
-        // Chamada HTTP
-        final resposta = await http.get(url, headers: {
-          'User-Agent': 'RotasApp_Flutter_Learning', // O Nominatim exige que a gente se identifique
-        });
-
-        // Extrair a Lat e Long
-        if (resposta.statusCode == 200) {
-          final dados = json.decode(resposta.body);
-          if (dados.isNotEmpty) {
-            lat = double.parse(dados[0]['lat']);
-            lon = double.parse(dados[0]['lon']);
-          }
-        }
-      } catch (e) {
-        print("Erro ao buscar coordenadas: $e");
-      }
-    }
-
-      // 3. Monta a ficha
-      final ponto = LocalMap(
-        id: widget.pontoParaEditar?.id, // Mantém o ID
-        nome: nome,
-        endereco: enderecoTexto,
-        latitude: lat,
-        longitude: lon,
+    setState(() => _carregando = true);
+    try {
+      final resultado = await Dependencias.instance.pontos.salvar(
+        nome: _nomeController.text,
+        endereco: _enderecoController.text,
+        existente: widget.pontoParaEditar,
+        idUsuario: widget.idUsuario,
       );
 
-      // 4. Salva no Banco
-      if (widget.pontoParaEditar != null) {
-        await DatabaseHelper.instance.update(ponto);
+      if (!mounted) return;
+      if (resultado.aviso != null) {
+        Avisos.atencao(context, resultado.aviso!);
       } else {
-        await DatabaseHelper.instance.insert(ponto);
+        Avisos.sucesso(
+          context,
+          _editando
+              ? 'Ponto atualizado com sucesso!'
+              : 'Ponto salvo e localizado no mapa!',
+        );
       }
-      
-      // 5. Sai do formulário e volta para a tela inicial
-      if (mounted) {
-        Navigator.pop(context);
-      }
+      Navigator.pop(context, true);
+    } on Exception catch (erro) {
+      if (!mounted) return;
+      setState(() => _carregando = false);
+      Avisos.erro(context, 'Não foi possível salvar o ponto. $erro');
     }
   }
 
@@ -100,40 +84,71 @@ class _FormPageState extends State<FormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.pontoParaEditar == null ? 'Novo Ponto' : 'Editar Ponto'),
+        title: Text(_editando ? 'Editar ponto' : 'Novo ponto'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              // Nome
-              TextFormField(
-                controller: _nomeController,
-                decoration: const InputDecoration(labelText: 'Nome do Local'),
-                validator: (valor) => valor!.isEmpty ? 'Digite um nome' : null,
-              ),
-              const SizedBox(height: 16),
-              
-              // Endereço
-              TextFormField(
-                controller: _enderecoController,
-                decoration: const InputDecoration(
-                    labelText: 'Endereço Completo',
-                    hintText: 'Ex: Av. Maringá, 134, Centro, Cidade'),
-                validator: (valor) => valor!.isEmpty ? 'Digite um endereço' : null,
-              ),
-              const SizedBox(height: 32),
-              
-              // Salvar
-              _carregando
-                  ? const CircularProgressIndicator() // Bolinha girando se estiver carregando
-                  : ElevatedButton(
-                      onPressed: _salvarPonto,
-                      child: const Text('Salvar e Buscar no Mapa'),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Form(
+            key: _formulario,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (_editando && widget.pontoParaEditar!.temCoordenadas)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: CaixaAviso(
+                      icone: Icons.info_outline,
+                      cor: Theme.of(context).colorScheme.primary,
+                      mensagem: 'As coordenadas atuais serão mantidas se o '
+                          'endereço não for alterado.',
                     ),
-            ],
+                  ),
+                TextFormField(
+                  controller: _nomeController,
+                  textCapitalization: TextCapitalization.sentences,
+                  textInputAction: TextInputAction.next,
+                  decoration: const InputDecoration(
+                    labelText: 'Nome do local',
+                    hintText: 'Ex.: Mercado Central',
+                    prefixIcon: Icon(Icons.badge_outlined),
+                  ),
+                  validator: (valor) => (valor == null || valor.trim().isEmpty)
+                      ? 'Digite um nome para o local.'
+                      : null,
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _enderecoController,
+                  textCapitalization: TextCapitalization.words,
+                  maxLines: 2,
+                  textInputAction: TextInputAction.newline,
+                  decoration: const InputDecoration(
+                    labelText: 'Endereço completo',
+                    hintText: 'Ex.: Av. Maringá, 134, Centro, Londrina - PR',
+                    helperText: 'Quanto mais completo o endereço, mais precisa '
+                        'a localização no mapa.',
+                    prefixIcon: Icon(Icons.map_outlined),
+                  ),
+                  validator: (valor) => (valor == null || valor.trim().isEmpty)
+                      ? 'Digite o endereço do local.'
+                      : null,
+                ),
+                const SizedBox(height: 32),
+                if (_carregando) ...[
+                  const Center(child: CircularProgressIndicator()),
+                  const SizedBox(height: 12),
+                  const Center(
+                    child: Text('Buscando as coordenadas no mapa...'),
+                  ),
+                ] else
+                  FilledButton.icon(
+                    onPressed: _salvar,
+                    icon: const Icon(Icons.save_outlined),
+                    label: const Text('Salvar e buscar no mapa'),
+                  ),
+              ],
+            ),
           ),
         ),
       ),

@@ -1,5 +1,5 @@
 name: rotas_app
-description: "A new Flutter project."
+description: "S.R.I. - Sistema de Rotas Inteligentes: aplicativo móvel para planejamento, execução e reutilização de rotas de coleta e entrega."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -39,6 +39,8 @@ dependencies:
   flutter_map: ^8.2.2
   latlong2: ^0.9.1
   http: ^1.6.0
+  crypto: ^3.0.7
+  geolocator: ^14.1.1
 
 dev_dependencies:
   flutter_test:
@@ -50,6 +52,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  sqflite_common_ffi: ^2.4.0+3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

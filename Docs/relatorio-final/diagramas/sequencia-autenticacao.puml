@@ -1,0 +1,71 @@
+@startuml
+' Fonte do diagrama de sequencia da autenticacao (UC04 - Gerenciar Usuario).
+' Renderizado com: java -jar plantuml.jar -charset UTF-8 -tpng sequencia-autenticacao.puml
+'
+' Cobre a conta lembrada, a conferencia da senha e a politica de sessao
+' definida pela opcao "manter conectado".
+
+skinparam defaultFontSize 12
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+skinparam maxMessageSize 240
+skinparam ParticipantPadding 10
+autonumber
+
+actor "Usuário" as Usuario
+participant "LoginPage\n(tela)" as Tela
+participant "AutenticacaoService\n(serviço)" as Auth
+participant "UsuarioDao\n(persistência)" as UsuarioDao
+participant "PreferenciasDao\n(persistência)" as Prefs
+database "SQLite\nRotasApp.db" as Banco
+
+note over Tela
+  O PortaoSessao já verificou a sessão gravada; sem sessão,
+  esta tela é apresentada.
+end note
+
+== Abertura da tela ==
+
+Tela -> Auth : contaLembrada()
+Auth -> Prefs : ler(ultimo_email, ultimo_nome)
+Prefs --> Auth : e-mail e nome (ou vazio)
+Auth --> Tela : ContaLembrada
+Tela -> Tela : pré-preenche o e-mail e foca a senha
+
+== Tentativa de acesso ==
+
+Usuario -> Tela : digita a senha e toca em Entrar
+Tela -> Tela : valida o formulário
+
+alt formulário inválido
+  Tela --> Usuario : indica o campo obrigatório
+else formulário válido
+  Tela -> Auth : entrar(email, senha, manterConectado)
+
+  Auth -> UsuarioDao : buscarPorEmail(email)
+  UsuarioDao -> Banco : SELECT * FROM usuarios\nWHERE email = ?
+  Banco --> UsuarioDao : registro ou vazio
+  UsuarioDao --> Auth : Usuario ou nulo
+
+  Auth -> Auth : deriva o hash e compara\nem tempo constante
+
+  alt sem conta ou hash diferente
+    Auth --> Tela : FalhaAutenticacao\n(e-mail ou senha incorretos)
+    Tela --> Usuario : aviso de erro — mesma mensagem\npara os dois casos
+  else credenciais válidas
+    alt manter conectado
+      Auth -> UsuarioDao : abrirSessao(id)
+      UsuarioDao -> Banco : INSERT OR REPLACE\nINTO sessao (id = 1)
+    else sessão só nesta execução
+      Auth -> UsuarioDao : encerrarSessao()
+      UsuarioDao -> Banco : DELETE FROM sessao\nWHERE id = 1
+    end
+    Auth -> Prefs : grava a conta lembrada\ne a opção de sessão
+    Prefs -> Banco : INSERT OR REPLACE\nINTO preferencias
+    Auth --> Tela : Usuario autenticado
+    Tela -> Tela : devolve o usuário ao PortaoSessao,\nque abre a HomePage
+  end
+end
+
+@enduml

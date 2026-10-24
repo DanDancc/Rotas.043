@@ -5,7 +5,9 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Rotas App</string>
+	<string>S.R.I. Rotas</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>O S.R.I. usa a sua localização para acompanhar o deslocamento e indicar o próximo ponto da rota durante a navegação assistida.</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
